@@ -136,7 +136,7 @@ class Wall:
         self.body = pymunk.Body(body_type=pymunk.Body.STATIC)
         self.shape = pymunk.Segment(self.body, a, b, self.thickness // 2)
         self.shape.friction = 10
-        space.add(self.body, self.shape) : #Add le corps et la forme du mur à l'espace physique
+        space.add(self.body, self.shape) #Add le corps et la forme du mur à l'espace physique
         print(f"wall {self.shape.friction=}")
 
     def draw(self, screen):
@@ -162,6 +162,28 @@ def resolve_collision(p1, p2, space, particles, mapper):
             return pn
     return None #Si les deux fruits ne sont pas du même type et ne se chevauchent pas
 
+screen = pygame.display.set_mode((WIDTH, HEIGHT)) #Défini la taille de la fenêtre grâce aux viariables WIDTH et HEIGHT précisées au début
+pygame.display.set_caption("PySuika") #Définit le titre de la fenêtre de jeu
+clock = pygame.time.Clock() #lance le rafraichissement de jeu
+pygame.font.init() #Initialise le systeme de police d'écriture
+scorefont = pygame.font.SysFont("monospace", 32) #Initialise la police du score
+overfont = pygame.font.SysFont("monospace", 72)#Initialise la police du GAME OVER
 
+space = pymunk.Space() #Création de l'espace dans lequel tout va interagir
+space.gravity = (0, GRAVITY) #mise en place de la gravité dans l'espace pymunk
+space.damping = DAMPING #Définit l'unité d'amortissement des fruits lorsqu'ils tomberont
+space.collision_bias = BIAS #Biais de collision (pour gérer les problèmes de stabilité dans les collision)
+print(f"{space.damping=}")
+print(f"{space.collision_bias=}")
+print(f"{space.collision_slop=}")
 
-# Cela permet  remplacer des espaces réservés dans une chaîne par les valeurs correspondantes
+pad = 20 #épaisseur des murs de 20pixels
+left = Wall(A, B, space) #mur gauche
+bottom = Wall(B, C, space) #mur du bas
+right = Wall(C, D, space) #mur droit
+walls = [left, bottom, right] #liste des 3 murs du jeu
+
+wait_for_next = 0 #Délai avant qu'un nouveau fruit apparaisse apres que le précédent fruit ait touché le fond
+next_particle = PreParticle(WIDTH//2, rng.integers(0, 5)) #prepare le prochain fruit entre le plus petit et le 5eme plus petit
+particles = [] #liste qui garde les fruits encore présent dans le jeu
+# Cela permet  remplacer des espaces réservés dans une chaîne par les valeurs correspondantes des variables ou des expressions des variables ou des expressions Python directement dans une chaîne.
