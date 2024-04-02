@@ -186,4 +186,37 @@ walls = [left, bottom, right] #liste des 3 murs du jeu
 wait_for_next = 0 #Délai avant qu'un nouveau fruit apparaisse apres que le précédent fruit ait touché le fond
 next_particle = PreParticle(WIDTH//2, rng.integers(0, 5)) #prepare le prochain fruit entre le plus petit et le 5eme plus petit
 particles = [] #liste qui garde les fruits encore présent dans le jeu
+
+# Collision Handler
+handler = space.add_collision_handler(1, 1)
+
+def collide(arbiter, space, data):
+    """  fonction de gestion des collisions
+    """
+    sh1, sh2 = arbiter.shapes #les 2 fruits dans l'arbitre de collision 
+    _mapper = data["mapper"]#Récupère le mapping des 2 fruits 
+    pa1 = _mapper[sh1]
+    pa2 = _mapper[sh2] #Obtient les fruit correspondants aux deux formes en collision impliquées dans l'arbitre de collision.
+    cond = bool(pa1.n != pa2.n) #vérifie si ils sont du même type avec leur indice de couleur n
+    pa1.has_collided = cond
+    pa2.has_collided = cond
+    if not cond: #si ils ne sont pas de meme type
+        new_particle = resolve_collision(pa1, pa2, space, data["particles"], _mapper) #resolve colision pour traiter la colision entre les 2fruits
+        data["particles"].append(new_particle) #ajoute le nouveau fruits a la liste de fruits actif
+        data["score"] += POINTS[pa1.n]#Met à jour le score de point en ajoutant la valeur du fruit ajouté
+    return cond #True si les 2 fruits sont diff et false si elle a été traitée
+
+handler.begin = collide #associe le gestionnaire de collision a la fonction collide
+handler.data["mapper"] = shape_to_particle #stocke le mapping entre les fruits / collisions
+handler.data["particles"] = particles #stocke liste fruits actif au gestionnaire de collision
+handler.data["score"] = 0 #stocke le score gestionnaire collision
+
+#initiation du main
+
+
+
+
+
+
+
 # Cela permet  remplacer des espaces réservés dans une chaîne par les valeurs correspondantes des variables ou des expressions des variables ou des expressions Python directement dans une chaîne.
