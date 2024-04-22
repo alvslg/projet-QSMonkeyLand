@@ -1,26 +1,21 @@
-import sys #Ce module est particulièrement intéressant pour récupérer les arguments
+import sys#Ce module est particulièrement intéressant pour récupérer les arguments
            #passés à un script Python lorsque celui-ci est appelé en ligne de commande.
 
-import numpy as np #très utile pour effectuer des calculs logiques et mathématiques
+import numpy as np#très utile pour effectuer des calculs logiques et mathématiques
                    #sur des tableaux et des matrices 
 import pygame
-
 import pymunk #une bibliothèque Python pour la simulation de la physique 2D 
 
 pygame.init()
 rng = np.random.default_rng() #Initialise un générateur de nombres aléatoires à partir de NumPy.
 
-#constantes du jeu
-
-# Définit la taille de la fenêtre du jeu en utilisant NumPy.
-SIZE = WIDTH, HEIGHT = np.array([570, 770])
-
+# Constants
+SIZE = WIDTH, HEIGHT = np.array([570, 770]) # Définit la taille de la fenêtre du jeu en utilisant NumPy.
 # Définit un décalage pour le contenu à l'intérieur de la fenêtre.
 PAD = (24, 160)
-
 # Définit les coordonnées de quatre points pour définir un cadre à l'intérieur de la fenêtre.
 A = (PAD[0], PAD[1])
-B = (PAD[0] - HEIGHT - PAD[0])
+B = (PAD[0], HEIGHT - PAD[0])
 C = (WIDTH - PAD[0], HEIGHT - PAD[0])
 D = (WIDTH - PAD[0], PAD[1])
 
@@ -28,51 +23,51 @@ D = (WIDTH - PAD[0], PAD[1])
 BG_COLOR = (250, 240, 148)
 W_COLOR = (250, 190, 58)
 COLORS = [
-    (245, 0, 0),
-    (245, 100, 100),
-    (150, 20, 250),
-    (250, 210, 10),
+    (138,43,226),
+    (250, 0, 0),
+    (50, 205, 50),
+    (255, 215, 0),
     (250, 150, 0),
-    (245, 0, 0),
+    (250, 0, 0),
     (250, 250, 100),
-    (255, 180, 180),
-    (255, 255, 0),
-    (100, 235, 10),
-    (0, 185, 0),
+    (139, 69, 19),
+    (0, 255, 0),
+    (255, 255, 10),
+    (0, 128, 0),
 ]
 
 #Nombre d'images par seconde du jeu
 FPS = 240
 
 # Définit une liste de rayons pour les objets du jeu
-RADII = [17, 25, 32, 38, 50, 63, 75, 87, 100, 115, 135] 
+RADII = [17, 25, 32, 38, 50, 63, 75, 87, 100, 115, 135]
 
 #Définit l'épaisseur des objets du jeu
 THICKNESS = 14
 
 #Définit diverses constantes utilisées dans la simulation physique.
-DENSITY= 0.001
-ELASTICITY = 0.1
+DENSITY = 0.001
+ELASTICITY = 0.5
 IMPULSE = 10000
 GRAVITY = 2000
 DAMPING = 0.8
 NEXT_DELAY = FPS
-NEXT_STEPS = 20
 BIAS = 0.00001
 POINTS = [1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66]
 
 # Crée un dictionnaire vide qui sera utilisé pour mapper les formes des particules aux
-#objets Particle correspondants.
+#objets Particle correspondants
 shape_to_particle = dict()
 
+
 class Particle:
-    """Définit une classe Particle qui représente un fruit dans le jeu Suika."""
+        #Définit une classe Particle qui représente un fruit dans le jeu Suika.
     def __init__(self, pos, n, space, mapper):
-        self.n = n % 11
-        self.radius = RADII[self.n]
+        self.n = n % 11 #Définit sa couleur
+        self.radius = RADII[self.n] #Détermine le rayon du fruit en fonction de la couleur attribuée
         self.body = pymunk.Body(body_type=pymunk.Body.DYNAMIC)
         self.body.position = tuple(pos)
-        self.shape = pymunk.Circle(body=self.body, radius=self.radius)
+        self.shape = pymunk.Circle(body=self.body, radius=self.radius) # Crée une forme de collision circulaire pour le fruit, associée au corps physique
         self.shape.density = DENSITY
         self.shape.elasticity = ELASTICITY
         self.shape.collision_type = 1
@@ -103,9 +98,7 @@ class Particle:
 
 
 class PreParticle:
-    """ Cette classe représente un fruit préliminaire, affichée avant que
-        le fruit ne soit relâchée. En gros elle est sur la ligne invisible en haut
-        de l'écran pour choisir l'endroit où le lacher"""
+    #Cette classe représente un fruit préliminaire, affichée avant que le fruit ne soit relâchée. En gros elle est sur la ligne invisible en haut de l'écran pour choisir l'endroit où le lacher
     def __init__(self, x, n):
         self.n = n % 11 #choisis la bonne couleur
         self.radius = RADII[self.n]
@@ -127,16 +120,14 @@ class PreParticle:
 
 
 class Wall:
-    """ Cette classe représente un mur dans le jeu. Les murs sont statiques et ne
-        peuvent pas être déplacés. Ils sont utilisés pour délimiter l'espace de jeu
-        et peuvent servir d'obstacles pour les fruits."""
+    #Cette classe représente un mur dans le jeu. Les murs sont statiques et ne peuvent pas être déplacés. Ils sont utilisés pour délimiter l'espace de jeu et peuvent servir d'obstacles pour les fruits."""
     thickness = THICKNESS
 
-    def __init__(self, a, b, space): #Crée un corps physique à l'aide de la classe pymunk.Body
+    def __init__(self, a, b, space):
         self.body = pymunk.Body(body_type=pymunk.Body.STATIC)
         self.shape = pymunk.Segment(self.body, a, b, self.thickness // 2)
         self.shape.friction = 10
-        space.add(self.body, self.shape) #Add le corps et la forme du mur à l'espace physique
+        space.add(self.body, self.shape)
         print(f"wall {self.shape.friction=}")
 
     def draw(self, screen):
@@ -162,6 +153,16 @@ def resolve_collision(p1, p2, space, particles, mapper):
             return pn
     return None #Si les deux fruits ne sont pas du même type et ne se chevauchent pas
 
+def display_next_fruit_right(screen, next_particle):
+    fruit_index = next_particle.n+1 % 11
+    fruit_color = COLORS[fruit_index]  # Obtenez la couleur correspondant au prochain fruit
+    fruit_radius = RADII[fruit_index]  # Obtenez le rayon correspondant au prochain fruit
+
+    # Dessiner un cercle représentant le prochain fruit
+    pygame.draw.circle(screen, fruit_color, (WIDTH - 50, 50), fruit_radius)
+
+
+# Create Pygame window
 screen = pygame.display.set_mode((WIDTH, HEIGHT)) #Défini la taille de la fenêtre grâce aux viariables WIDTH et HEIGHT précisées au début
 pygame.display.set_caption("PySuika") #Définit le titre de la fenêtre de jeu
 clock = pygame.time.Clock() #lance le rafraichissement de jeu
@@ -169,9 +170,9 @@ pygame.font.init() #Initialise le systeme de police d'écriture
 scorefont = pygame.font.SysFont("monospace", 32) #Initialise la police du score
 overfont = pygame.font.SysFont("monospace", 72)#Initialise la police du GAME OVER
 
-space = pymunk.Space() #Création de l'espace dans lequel tout va interagir
+space = pymunk.Space() #création de l'espace dans lequel tout va interagir
 space.gravity = (0, GRAVITY) #mise en place de la gravité dans l'espace pymunk
-space.damping = DAMPING #Définit l'unité d'amortissement des fruits lorsqu'ils tomberont
+space.damping = DAMPING #Définit l'unité d'amortisement des fruits lorsqu'ils tomberont
 space.collision_bias = BIAS #Biais de collision (pour gérer les problèmes de stabilité dans les collision)
 print(f"{space.damping=}")
 print(f"{space.collision_bias=}")
@@ -187,6 +188,7 @@ wait_for_next = 0 #Délai avant qu'un nouveau fruit apparaisse apres que le pré
 next_particle = PreParticle(WIDTH//2, rng.integers(0, 5)) #prepare le prochain fruit entre le plus petit et le 5eme plus petit
 particles = [] #liste qui garde les fruits encore présent dans le jeu
 
+# Collision Handler
 # Collision Handler
 handler = space.add_collision_handler(1, 1)
 
@@ -206,12 +208,73 @@ def collide(arbiter, space, data):
         data["score"] += POINTS[pa1.n]#Met à jour le score de point en ajoutant la valeur du fruit ajouté
     return cond #True si les 2 fruits sont diff et false si elle a été traitée
 
+
 handler.begin = collide #associe le gestionnaire de collision a la fonction collide
 handler.data["mapper"] = shape_to_particle #stocke le mapping entre les fruits / collisions
 handler.data["particles"] = particles #stocke liste fruits actif au gestionnaire de collision
 handler.data["score"] = 0 #stocke le score gestionnaire collision
 
 #initiation du main
+game_over = False
+
+while not game_over:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        elif event.type == pygame.KEYDOWN:     
+            if event.key in [pygame.K_RETURN, pygame.K_SPACE]:
+                particles.append(next_particle.release(space, shape_to_particle))
+                wait_for_next = NEXT_DELAY
+            elif event.key in [pygame.K_q, pygame.K_ESCAPE]:
+                pygame.quit()
+                sys.exit()
+        elif event.type == pygame.MOUSEBUTTONDOWN and wait_for_next == 0:
+            particles.append(next_particle.release(space, shape_to_particle))
+            wait_for_next = NEXT_DELAY
+
+    next_particle.set_x(pygame.mouse.get_pos()[0])
+
+    if wait_for_next > 1:
+        wait_for_next -= 1
+    elif wait_for_next == 1:
+        next_particle = PreParticle(next_particle.x, rng.integers(0, 5))
+        wait_for_next -= 1
+
+    # Draw background and particles
+    screen.fill(BG_COLOR)
+    if wait_for_next == 0:
+        next_particle.draw(screen)
+    for w in walls:
+        w.draw(screen)
+    for p in particles:
+        p.draw(screen)
+        if p.pos[1] < PAD[1] and p.has_collided:
+            label = overfont.render("Game Over!", 1, (0, 0, 0))
+            screen.blit(label, PAD)
+            game_over = True
+    label = scorefont.render(f"Score: {handler.data['score']}", 1, (0, 0, 0))
+    screen.blit(label, (10, 10))
+     # Afficher le prochain fruit à droite
+    display_next_fruit_right(screen, next_particle)
+
+    space.step(1/FPS)
+    
+    # Afficher le prochain fruit à droite
+    display_next_fruit_right(screen, next_particle)
+
+    pygame.display.update()
+    clock.tick(FPS)
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        elif event.type == pygame.KEYDOWN:
+            if event.key in [pygame.K_RETURN, pygame.K_SPACE, pygame.K_q, pygame.K_ESCAPE]:
+                pygame.quit()
+                sys.exit()
 
 
 
