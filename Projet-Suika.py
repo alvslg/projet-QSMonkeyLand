@@ -264,15 +264,15 @@ while not game_over:
     display_next_fruit_right(screen, next_particle)
 
     pygame.display.update()
-    clock.tick(FPS)
+    clock.tick(FPS) #rafraichissement
 
-while True:
+while True: #game over
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
+        if event.type == pygame.QUIT: #ferme la fenêtre
             pygame.quit()
             sys.exit()
         elif event.type == pygame.KEYDOWN:
-            if event.key in [pygame.K_RETURN, pygame.K_SPACE, pygame.K_q, pygame.K_ESCAPE]:
+            if event.key in [pygame.K_RETURN, pygame.K_SPACE, pygame.K_q, pygame.K_ESCAPE]: #verifie si q echap space ou return a été enfoncée
                 pygame.quit()
                 sys.exit()
 
