@@ -276,10 +276,3 @@ while True: #game over
                 pygame.quit()
                 sys.exit()
 
-
-
-
-
-
-
-# Cela permet  remplacer des espaces réservés dans une chaîne par les valeurs correspondantes des variables ou des expressions des variables ou des expressions Python directement dans une chaîne.
