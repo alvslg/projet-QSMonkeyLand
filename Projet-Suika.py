@@ -242,23 +242,23 @@ while not game_over:
         wait_for_next -= 1
 
     # Draw background and particles
-    screen.fill(BG_COLOR)
+    screen.fill(BG_COLOR) #Remplit l'écran avec la couleur de l'arriere plan
     if wait_for_next == 0:
         next_particle.draw(screen)
-    for w in walls:
+    for w in walls: #dessine les murs
         w.draw(screen)
-    for p in particles:
+    for p in particles: #dessine les fruits
         p.draw(screen)
-        if p.pos[1] < PAD[1] and p.has_collided:
+        if p.pos[1] < PAD[1] and p.has_collided: #verifie si un fruit a atteint la ligne du game over
             label = overfont.render("Game Over!", 1, (0, 0, 0))
             screen.blit(label, PAD)
             game_over = True
-    label = scorefont.render(f"Score: {handler.data['score']}", 1, (0, 0, 0))
-    screen.blit(label, (10, 10))
+    label = scorefont.render(f"Score: {handler.data['score']}", 1, (0, 0, 0)) #score du joueur
+    screen.blit(label, (10, 10)) #position du score a l'ecran
      # Afficher le prochain fruit à droite
-    display_next_fruit_right(screen, next_particle)
+    display_next_fruit_right(screen, next_particle) #essaye d'afficher le prochain fruit a l'avance
 
-    space.step(1/FPS)
+    space.step(1/FPS
     
     # Afficher le prochain fruit à droite
     display_next_fruit_right(screen, next_particle)
