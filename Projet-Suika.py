@@ -224,16 +224,16 @@ while not game_over:
             sys.exit()
         elif event.type == pygame.KEYDOWN:     
             if event.key in [pygame.K_RETURN, pygame.K_SPACE]:
-                particles.append(next_particle.release(space, shape_to_particle))
+                particles.append(next_particle.release(space, shape_to_particle)) #ajoute un nouveau fruit a la liste des particules en utilisant la méthode release de l'objet next particle.
                 wait_for_next = NEXT_DELAY
             elif event.key in [pygame.K_q, pygame.K_ESCAPE]:
                 pygame.quit()
                 sys.exit()
-        elif event.type == pygame.MOUSEBUTTONDOWN and wait_for_next == 0:
+        elif event.type == pygame.MOUSEBUTTONDOWN and wait_for_next == 0: #vérifie si l'événement est un clic de souris et que le délai d'attente avant le prochain lancemen est écoulé.
             particles.append(next_particle.release(space, shape_to_particle))
             wait_for_next = NEXT_DELAY
 
-    next_particle.set_x(pygame.mouse.get_pos()[0])
+    next_particle.set_x(pygame.mouse.get_pos()[0]) #définit la position du prochain fruit en fonction de la position de la souris.
 
     if wait_for_next > 1:
         wait_for_next -= 1
