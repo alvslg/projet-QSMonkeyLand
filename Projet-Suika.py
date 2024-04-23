@@ -258,7 +258,7 @@ while not game_over:
      # Afficher le prochain fruit à droite
     display_next_fruit_right(screen, next_particle) #essaye d'afficher le prochain fruit a l'avance
 
-    space.step(1/FPS
+    space.step(1/FPS) #frame du jeu en fonction du nombre de fps accordé
     
     # Afficher le prochain fruit à droite
     display_next_fruit_right(screen, next_particle)
