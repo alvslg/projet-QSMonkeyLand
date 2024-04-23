@@ -99,7 +99,7 @@ class Particle:
 
 class PreParticle:
     #Cette classe représente un fruit préliminaire, affichée avant que le fruit ne soit relâchée. En gros elle est sur la ligne invisible en haut de l'écran pour choisir l'endroit où le lacher
-    def __init__(self, x, n):
+    def __init__(self, x, n): #x est la variable horizontale sur laquelle le fruit apparait
         self.n = n % 11 #choisis la bonne couleur
         self.radius = RADII[self.n]
         self.x = x
