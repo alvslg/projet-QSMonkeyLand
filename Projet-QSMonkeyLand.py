@@ -65,14 +65,14 @@ class Particle:
     def __init__(self, pos, n, space, mapper):
         self.n = n % 11 #Définit sa couleur
         self.radius = RADII[self.n] #Détermine le rayon du fruit en fonction de la couleur attribuée
-        self.body = pymunk.Body(body_type=pymunk.Body.DYNAMIC)
+        self.body = pymunk.Body(body_type=pymunk.Body.DYNAMIC) #créer un corps physique pour le fruit en utilisant la classe body de pymunk DYNAMIC pour se deplacer et etre affecté par la physique
         self.body.position = tuple(pos)
         self.shape = pymunk.Circle(body=self.body, radius=self.radius) # Crée une forme de collision circulaire pour le fruit, associée au corps physique
         self.shape.density = DENSITY
         self.shape.elasticity = ELASTICITY
         self.shape.collision_type = 1
         self.shape.friction = 0.2
-        self.has_collided = False
+        self.has_collided = False #indicateur pour indiquer si  fruit a déjà été en collision avec autre fruit
         mapper[self.shape] = self
         print(f"part {self.shape.friction=}")
 
@@ -85,7 +85,7 @@ class Particle:
             c1 = np.array(COLORS[self.n])
             c2 = (c1 * 0.8).astype(int)
             pygame.draw.circle(screen, tuple(c2), self.body.position, self.radius)
-            pygame.draw.circle(screen, tuple(c1), self.body.position, self.radius * 0.9)
+            pygame.draw.circle(screen, tuple(c1), self.body.position, self.radius * 0.9) #Dessine les bord de la boule plus foncé
 
     def kill(self, space):
         space.remove(self.body, self.shape)
@@ -111,7 +111,7 @@ class PreParticle:
         pygame.draw.circle(screen, tuple(c2), (self.x, PAD[1] // 2), self.radius)
         pygame.draw.circle(screen, tuple(c1), (self.x, PAD[1] // 2), self.radius * 0.9)
 
-    def set_x(self, x):
+    def set_x(self, x): #défini position horizontale du fruit en haut
         lim = PAD[0] + self.radius + THICKNESS // 2
         self.x = np.clip(x, lim, WIDTH - lim)
 
